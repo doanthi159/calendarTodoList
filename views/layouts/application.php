@@ -37,7 +37,7 @@
                             </select>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" id="btn-delete" class="btn btn-danger">Delete task</button>
+                            <button type="button" id="btn-delete" class="btn btn-danger">Delete task</button>
                             <button type="submit" class="btn btn-default">Submit</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
