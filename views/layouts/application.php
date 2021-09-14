@@ -7,11 +7,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.css" />
         <link rel="stylesheet" href="./assets/stylesheets/style.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
         <title>Todo List</title>
     </head>
     <body>
@@ -51,18 +46,15 @@
             </form>
         </div>
     </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
     <script>
         $(document).ready(function() {
             var calendar = $('#calendar').fullCalendar({
                 editable:true,
-                customButtons: {
-                    myCustomButton: {
-                        text: 'custom!',
-                        click: function () {
-                            alert('clicked the custom button!');
-                        }
-                    }
-                },
                 header:{
                 left:'prev,next today',
                 center:'title',
@@ -93,7 +85,7 @@
                     $('#modalStatus').val(0);
                     $('#modalStart').val(start.toISOString());
                     $('#modalEnd').val(end.toISOString());
-                    $('#update').attr('action','http://localhost/TodoList/index.php/index.php?controller=pages&action=home');
+                    $('#update').attr('action','./index.php?controller=pages&action=home');
                     $('#calendarModal').modal();
                 },
                 editable:true,
@@ -111,6 +103,9 @@
                         success:function(){
                             calendar.fullCalendar('refetchEvents');
                             alert('Task Updated');
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(textStatus);
                         }
                     })
                 },
@@ -129,6 +124,9 @@
                         {
                             calendar.fullCalendar('refetchEvents');
                             alert("Task Updated");
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(textStatus);
                         }
                     });
                 },
@@ -139,17 +137,42 @@
                     var end = event.end;
                     var status = event.status;
                     $('#btn-delete').show();
+                    $('#btn-delete').attr("data-id", id);
                     $('#titleTask').html('Update task');
                     $('#modalId').val(id);
                     $('#modalTitle').val(title);
                     $('#modalStart').val(start.toISOString());
                     $('#modalEnd').val(end.toISOString());
                     $('#modalStatus').val(status);
-                    $('#update').attr('action','http://localhost/TodoList/index.php/index.php?controller=pages&action=home');
+                    $('#update').attr('action','./index.php?controller=pages&action=home');
                     $('#calendarModal').modal();
                 },
                 editable: true,
                 dayMaxEvents: true,
+            });
+        });
+
+        $(document).ready(function() {
+            $("#btn-delete").click(function(){
+                var deleteFlag = confirm("Press a button!");
+                if (deleteFlag == true) {
+                    var dataId = $(this).data("id");
+                    $.ajax({
+                        url: "./index.php?controller=pages&action=updateTask",
+                        type: "POST",
+                        data:{id:dataId,delete_flag:1},
+                        success: function (response) {
+                            if (response == 'true') {
+                                alert("delete task successfully");
+                            } else {
+                                alert("delete task fail");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(textStatus);
+                        }
+                    });
+                }
             });
         });
     </script>

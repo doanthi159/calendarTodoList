@@ -66,11 +66,21 @@ class PagesController extends BaseController
      */
     public function updateTask()
     {
-        if(isset($_POST["id"])) {
-            if ((strtotime($_POST['start'])) > (strtotime($_POST['end']))) {
-                $aMessageError['message'] = 'start date is greater than end date';
-                $this->error($aMessageError);
+        if (isset($_POST["id"])) {
+            if (isset($_POST['delete_flag']) && $_POST['delete_flag'] == 1) {
+                $aData = array(
+                    'delete_flag' => $_POST['delete_flag'],
+                    'id' => $_POST['id']
+                );
+                $bResult = TodoModel::updateDeleteFlagTaskById($aData);
+                if ($bResult === false) {
+                    $aMessageError['message'] = 'delete fail';
+                }
             } else {
+                if ((strtotime($_POST['start'])) > (strtotime($_POST['end']))) {
+                    $aMessageError['message'] = 'start date is greater than end date';
+                    $this->error($aMessageError);
+                }
                 $aData = array(
                     'title' => $_POST['title'],
                     'start_date' => $_POST['start'],
@@ -78,8 +88,12 @@ class PagesController extends BaseController
                     'status' => $_POST['status'],
                     'id' => $_POST['id']
                 );
-                TodoModel::updateTaskById($aData);
+                $bResult = TodoModel::updateTaskById($aData);
+                if ($bResult === false) {
+                    $aMessageError['message'] = 'delete fail';
+                }
             }
+            echo json_encode($bResult);
         }
     }
 

@@ -19,7 +19,7 @@ class TodoModel
     static function all()
     {
         $db = DB::getInstance();
-        $sQuery = "SELECT * FROM todolist";
+        $sQuery = "SELECT * FROM todolist WHERE delete_flag = '0'";
         $oQuery = $db->prepare($sQuery);
         $oQuery->execute();
         $aData = $oQuery->fetchAll();
@@ -32,6 +32,16 @@ class TodoModel
         $sQuery = "UPDATE todolist 
                   SET work_name='{$aData['title']}', start_date='{$aData['start_date']}', end_date='{$aData['end_date']}', status={$aData['status']}, update_date=NOW() 
                   WHERE id={$aData['id']}";
+        $oQuery = $db->prepare($sQuery);
+        return $oQuery->execute();
+    }
+
+    static function updateDeleteFlagTaskById($aData)
+    {
+        $db = DB::getInstance();
+        $sQuery = "UPDATE todolist 
+                  SET delete_flag='{$aData['delete_flag']}' 
+                  WHERE id={$aData['id']} AND delete_flag='0'";
         $oQuery = $db->prepare($sQuery);
         return $oQuery->execute();
     }
